@@ -32,6 +32,7 @@ type ComboboxProps = {
 
 export function ComboboxDemo({ items, placeholder, value, setValue }: ComboboxProps) {
   const [open, setOpen] = React.useState(false)
+  console.log(items, 'holaaa');
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -45,7 +46,7 @@ export function ComboboxDemo({ items, placeholder, value, setValue }: ComboboxPr
           <div className="flex items-center gap-2">
           <SearchIcon className="w-4 h-4 opacity-50" />
           {value
-            ? items.find((item) => item.value === value)?.label
+            ? items?.find((item) => item?.value === value)?.label
             : placeholder}
           </div>
           <ChevronsUpDown className="opacity-50" />
@@ -57,11 +58,12 @@ export function ComboboxDemo({ items, placeholder, value, setValue }: ComboboxPr
           <CommandList>
             <CommandEmpty>No framework found.</CommandEmpty>
             <CommandGroup>
-              {items.map((item) => (
+              {items?.map((item) => (
                 <CommandItem
                   key={item.value}
                   value={item.value}
                   onSelect={(currentValue) => {
+                    console.log(currentValue, 'currentValue');
                     setValue(currentValue === value ? "" : currentValue)
                     setOpen(false)
                   }}

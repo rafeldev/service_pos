@@ -8,6 +8,8 @@ import CartItem from "./CartItem/CartItem";
 import useCartStore from "@/store/useCartStore";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import { useQuery } from '@tanstack/react-query';
+import { getTables } from '@/services/api/tables';
 
 const items = [
   {
@@ -35,6 +37,16 @@ const items = [
 export default function Cart() {
   const { currentOrder, setCustomer, setTable, submitOrder } = useOrderStore();
   const { getTotal, clearCart, cart } = useCartStore()
+
+  const { data: tables, isLoading } = useQuery({
+    queryKey: ['tables'],
+    queryFn: getTables,
+  });
+
+  const tableOptions = tables?.map((table: Table) => ({
+    value: String(table.id),
+    label: table.numero,
+  })) || [];
 
 
   const tableValue = currentOrder.table;
@@ -67,20 +79,20 @@ export default function Cart() {
     <aside className="w-1/3 border-r border-gray-200 p-4 flex flex-col h-full overflow-hidden">
       <div className="flex justify-between items-center gap-2">
         <div className="flex flex-1 flex-col gap-0">
-          <Label className="text-sm font-medium mb-0">Table</Label>
+          <Label className="text-sm font-medium mb-0">Mesas</Label>
           <ComboboxDemo
-            items={items}
-            placeholder="Select table"
+            items={tableOptions}
+            placeholder={isLoading ? "Cargando..." : "Selecciona una mesa"}
             value={tableValue}
             setValue={setTable}
 
           />
         </div>
         <div className="flex flex-1 flex-col gap-0">
-          <Label className="text-sm font-medium mb-0">Customer</Label>
+          <Label className="text-sm font-medium mb-0">Clientes</Label>
           <ComboboxDemo
             items={items}
-            placeholder="Select customer"
+            placeholder="Selecciona un cliente"
             value={customerValue}
             setValue={setCustomer}
 
