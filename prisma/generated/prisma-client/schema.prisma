@@ -1,0 +1,124 @@
+// Define database connection via the `DATABASE_URL` env var
+datasource db {
+  provider = "postgresql"
+}
+
+// Define custom output path for generated Prisma Client
+generator client {
+  provider = "prisma-client-js"
+  output   = "./generated/prisma-client"
+}
+
+// Categorías de productos
+model Category {
+  id        Int      @id @default(autoincrement())
+  nombre    String   @db.VarChar(100)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relación con productos
+  productos Product[]
+
+  @@map("categories")
+}
+
+// Productos del menú
+model Product {
+  id          Int      @id @default(autoincrement())
+  nombre      String   @db.VarChar(200)
+  descripcion String?  @db.Text
+  precio      Decimal  @db.Decimal(10, 2)
+  imagen      String?  @db.VarChar(500) // URL de la imagen
+  activo      Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relación con categoría
+  categoriaId Int
+  categoria   Category @relation(fields: [categoriaId], references: [id], onDelete: Restrict)
+
+  // Relación con items de orden
+  orderItems OrderItem[]
+
+  @@map("products")
+}
+
+// Clientes
+model Customer {
+  id        Int      @id @default(autoincrement())
+  nombre    String   @db.VarChar(200)
+  email     String?  @db.VarChar(255)
+  telefono  String?  @db.VarChar(20)
+  activo    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relación con órdenes
+  orders Order[]
+
+  @@map("customers")
+}
+
+// Mesas
+model Table {
+  id        Int      @id @default(autoincrement())
+  numero    String   @unique @db.VarChar(50) // Ej: "Mesa 1", "Mesa 2"
+  capacidad Int? // Capacidad de la mesa
+  activa    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relación con órdenes
+  orders Order[]
+
+  @@map("tables")
+}
+
+// Órdenes
+model Order {
+  id        Int         @id @default(autoincrement())
+  total     Decimal     @db.Decimal(10, 2)
+  impuestos Decimal     @default(0) @db.Decimal(10, 2) // Porcentaje de impuestos
+  status    OrderStatus @default(PENDING)
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+
+  // Relaciones
+  customerId Int?
+  customer   Customer? @relation(fields: [customerId], references: [id], onDelete: SetNull)
+
+  tableId Int?
+  table   Table? @relation(fields: [tableId], references: [id], onDelete: SetNull)
+
+  // Items de la orden
+  items OrderItem[]
+
+  @@map("orders")
+}
+
+// Items de una orden
+model OrderItem {
+  id        Int      @id @default(autoincrement())
+  cantidad  Int      @default(1)
+  precio    Decimal  @db.Decimal(10, 2) // Precio al momento de la orden
+  subtotal  Decimal  @db.Decimal(10, 2) // cantidad * precio
+  createdAt DateTime @default(now())
+
+  // Relaciones
+  orderId Int
+  order   Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  productId Int
+  product   Product @relation(fields: [productId], references: [id], onDelete: Restrict)
+
+  @@map("order_items")
+}
+
+// Enum para el estado de la orden
+enum OrderStatus {
+  PENDING // Pendiente
+  PAID // Pagada
+  CANCELLED // Cancelada
+
+  @@map("order_status")
+}
