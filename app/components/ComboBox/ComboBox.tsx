@@ -32,7 +32,6 @@ type ComboboxProps = {
 
 export function ComboboxDemo({ items, placeholder, value, setValue }: ComboboxProps) {
   const [open, setOpen] = React.useState(false)
-  console.log(items, 'holaaa');
 
   return (
     <Popover open={open} onOpenChange={setOpen}>

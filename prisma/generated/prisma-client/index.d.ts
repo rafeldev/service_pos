@@ -3785,6 +3785,8 @@ export namespace Prisma {
   export type CustomerMinAggregateOutputType = {
     id: number | null
     nombre: string | null
+    direccion: string | null
+    cedula: string | null
     email: string | null
     telefono: string | null
     activo: boolean | null
@@ -3795,6 +3797,8 @@ export namespace Prisma {
   export type CustomerMaxAggregateOutputType = {
     id: number | null
     nombre: string | null
+    direccion: string | null
+    cedula: string | null
     email: string | null
     telefono: string | null
     activo: boolean | null
@@ -3805,6 +3809,8 @@ export namespace Prisma {
   export type CustomerCountAggregateOutputType = {
     id: number
     nombre: number
+    direccion: number
+    cedula: number
     email: number
     telefono: number
     activo: number
@@ -3825,6 +3831,8 @@ export namespace Prisma {
   export type CustomerMinAggregateInputType = {
     id?: true
     nombre?: true
+    direccion?: true
+    cedula?: true
     email?: true
     telefono?: true
     activo?: true
@@ -3835,6 +3843,8 @@ export namespace Prisma {
   export type CustomerMaxAggregateInputType = {
     id?: true
     nombre?: true
+    direccion?: true
+    cedula?: true
     email?: true
     telefono?: true
     activo?: true
@@ -3845,6 +3855,8 @@ export namespace Prisma {
   export type CustomerCountAggregateInputType = {
     id?: true
     nombre?: true
+    direccion?: true
+    cedula?: true
     email?: true
     telefono?: true
     activo?: true
@@ -3942,6 +3954,8 @@ export namespace Prisma {
   export type CustomerGroupByOutputType = {
     id: number
     nombre: string
+    direccion: string
+    cedula: string
     email: string | null
     telefono: string | null
     activo: boolean
@@ -3971,6 +3985,8 @@ export namespace Prisma {
   export type CustomerSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     nombre?: boolean
+    direccion?: boolean
+    cedula?: boolean
     email?: boolean
     telefono?: boolean
     activo?: boolean
@@ -3983,6 +3999,8 @@ export namespace Prisma {
   export type CustomerSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     nombre?: boolean
+    direccion?: boolean
+    cedula?: boolean
     email?: boolean
     telefono?: boolean
     activo?: boolean
@@ -3993,6 +4011,8 @@ export namespace Prisma {
   export type CustomerSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     nombre?: boolean
+    direccion?: boolean
+    cedula?: boolean
     email?: boolean
     telefono?: boolean
     activo?: boolean
@@ -4003,6 +4023,8 @@ export namespace Prisma {
   export type CustomerSelectScalar = {
     id?: boolean
     nombre?: boolean
+    direccion?: boolean
+    cedula?: boolean
     email?: boolean
     telefono?: boolean
     activo?: boolean
@@ -4010,7 +4032,7 @@ export namespace Prisma {
     updatedAt?: boolean
   }
 
-  export type CustomerOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "nombre" | "email" | "telefono" | "activo" | "createdAt" | "updatedAt", ExtArgs["result"]["customer"]>
+  export type CustomerOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "nombre" | "direccion" | "cedula" | "email" | "telefono" | "activo" | "createdAt" | "updatedAt", ExtArgs["result"]["customer"]>
   export type CustomerInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     orders?: boolean | Customer$ordersArgs<ExtArgs>
     _count?: boolean | CustomerCountOutputTypeDefaultArgs<ExtArgs>
@@ -4026,6 +4048,8 @@ export namespace Prisma {
     scalars: $Extensions.GetPayloadResult<{
       id: number
       nombre: string
+      direccion: string
+      cedula: string
       email: string | null
       telefono: string | null
       activo: boolean
@@ -4457,6 +4481,8 @@ export namespace Prisma {
   interface CustomerFieldRefs {
     readonly id: FieldRef<"Customer", 'Int'>
     readonly nombre: FieldRef<"Customer", 'String'>
+    readonly direccion: FieldRef<"Customer", 'String'>
+    readonly cedula: FieldRef<"Customer", 'String'>
     readonly email: FieldRef<"Customer", 'String'>
     readonly telefono: FieldRef<"Customer", 'String'>
     readonly activo: FieldRef<"Customer", 'Boolean'>
@@ -8424,6 +8450,8 @@ export namespace Prisma {
   export const CustomerScalarFieldEnum: {
     id: 'id',
     nombre: 'nombre',
+    direccion: 'direccion',
+    cedula: 'cedula',
     email: 'email',
     telefono: 'telefono',
     activo: 'activo',
@@ -8734,6 +8762,8 @@ export namespace Prisma {
     NOT?: CustomerWhereInput | CustomerWhereInput[]
     id?: IntFilter<"Customer"> | number
     nombre?: StringFilter<"Customer"> | string
+    direccion?: StringFilter<"Customer"> | string
+    cedula?: StringFilter<"Customer"> | string
     email?: StringNullableFilter<"Customer"> | string | null
     telefono?: StringNullableFilter<"Customer"> | string | null
     activo?: BoolFilter<"Customer"> | boolean
@@ -8745,6 +8775,8 @@ export namespace Prisma {
   export type CustomerOrderByWithRelationInput = {
     id?: SortOrder
     nombre?: SortOrder
+    direccion?: SortOrder
+    cedula?: SortOrder
     email?: SortOrderInput | SortOrder
     telefono?: SortOrderInput | SortOrder
     activo?: SortOrder
@@ -8755,21 +8787,25 @@ export namespace Prisma {
 
   export type CustomerWhereUniqueInput = Prisma.AtLeast<{
     id?: number
+    cedula?: string
     AND?: CustomerWhereInput | CustomerWhereInput[]
     OR?: CustomerWhereInput[]
     NOT?: CustomerWhereInput | CustomerWhereInput[]
     nombre?: StringFilter<"Customer"> | string
+    direccion?: StringFilter<"Customer"> | string
     email?: StringNullableFilter<"Customer"> | string | null
     telefono?: StringNullableFilter<"Customer"> | string | null
     activo?: BoolFilter<"Customer"> | boolean
     createdAt?: DateTimeFilter<"Customer"> | Date | string
     updatedAt?: DateTimeFilter<"Customer"> | Date | string
     orders?: OrderListRelationFilter
-  }, "id">
+  }, "id" | "cedula">
 
   export type CustomerOrderByWithAggregationInput = {
     id?: SortOrder
     nombre?: SortOrder
+    direccion?: SortOrder
+    cedula?: SortOrder
     email?: SortOrderInput | SortOrder
     telefono?: SortOrderInput | SortOrder
     activo?: SortOrder
@@ -8788,6 +8824,8 @@ export namespace Prisma {
     NOT?: CustomerScalarWhereWithAggregatesInput | CustomerScalarWhereWithAggregatesInput[]
     id?: IntWithAggregatesFilter<"Customer"> | number
     nombre?: StringWithAggregatesFilter<"Customer"> | string
+    direccion?: StringWithAggregatesFilter<"Customer"> | string
+    cedula?: StringWithAggregatesFilter<"Customer"> | string
     email?: StringNullableWithAggregatesFilter<"Customer"> | string | null
     telefono?: StringNullableWithAggregatesFilter<"Customer"> | string | null
     activo?: BoolWithAggregatesFilter<"Customer"> | boolean
@@ -9141,6 +9179,8 @@ export namespace Prisma {
 
   export type CustomerCreateInput = {
     nombre: string
+    direccion: string
+    cedula: string
     email?: string | null
     telefono?: string | null
     activo?: boolean
@@ -9152,6 +9192,8 @@ export namespace Prisma {
   export type CustomerUncheckedCreateInput = {
     id?: number
     nombre: string
+    direccion: string
+    cedula: string
     email?: string | null
     telefono?: string | null
     activo?: boolean
@@ -9162,6 +9204,8 @@ export namespace Prisma {
 
   export type CustomerUpdateInput = {
     nombre?: StringFieldUpdateOperationsInput | string
+    direccion?: StringFieldUpdateOperationsInput | string
+    cedula?: StringFieldUpdateOperationsInput | string
     email?: NullableStringFieldUpdateOperationsInput | string | null
     telefono?: NullableStringFieldUpdateOperationsInput | string | null
     activo?: BoolFieldUpdateOperationsInput | boolean
@@ -9173,6 +9217,8 @@ export namespace Prisma {
   export type CustomerUncheckedUpdateInput = {
     id?: IntFieldUpdateOperationsInput | number
     nombre?: StringFieldUpdateOperationsInput | string
+    direccion?: StringFieldUpdateOperationsInput | string
+    cedula?: StringFieldUpdateOperationsInput | string
     email?: NullableStringFieldUpdateOperationsInput | string | null
     telefono?: NullableStringFieldUpdateOperationsInput | string | null
     activo?: BoolFieldUpdateOperationsInput | boolean
@@ -9184,6 +9230,8 @@ export namespace Prisma {
   export type CustomerCreateManyInput = {
     id?: number
     nombre: string
+    direccion: string
+    cedula: string
     email?: string | null
     telefono?: string | null
     activo?: boolean
@@ -9193,6 +9241,8 @@ export namespace Prisma {
 
   export type CustomerUpdateManyMutationInput = {
     nombre?: StringFieldUpdateOperationsInput | string
+    direccion?: StringFieldUpdateOperationsInput | string
+    cedula?: StringFieldUpdateOperationsInput | string
     email?: NullableStringFieldUpdateOperationsInput | string | null
     telefono?: NullableStringFieldUpdateOperationsInput | string | null
     activo?: BoolFieldUpdateOperationsInput | boolean
@@ -9203,6 +9253,8 @@ export namespace Prisma {
   export type CustomerUncheckedUpdateManyInput = {
     id?: IntFieldUpdateOperationsInput | number
     nombre?: StringFieldUpdateOperationsInput | string
+    direccion?: StringFieldUpdateOperationsInput | string
+    cedula?: StringFieldUpdateOperationsInput | string
     email?: NullableStringFieldUpdateOperationsInput | string | null
     telefono?: NullableStringFieldUpdateOperationsInput | string | null
     activo?: BoolFieldUpdateOperationsInput | boolean
@@ -9693,6 +9745,8 @@ export namespace Prisma {
   export type CustomerCountOrderByAggregateInput = {
     id?: SortOrder
     nombre?: SortOrder
+    direccion?: SortOrder
+    cedula?: SortOrder
     email?: SortOrder
     telefono?: SortOrder
     activo?: SortOrder
@@ -9707,6 +9761,8 @@ export namespace Prisma {
   export type CustomerMaxOrderByAggregateInput = {
     id?: SortOrder
     nombre?: SortOrder
+    direccion?: SortOrder
+    cedula?: SortOrder
     email?: SortOrder
     telefono?: SortOrder
     activo?: SortOrder
@@ -9717,6 +9773,8 @@ export namespace Prisma {
   export type CustomerMinOrderByAggregateInput = {
     id?: SortOrder
     nombre?: SortOrder
+    direccion?: SortOrder
+    cedula?: SortOrder
     email?: SortOrder
     telefono?: SortOrder
     activo?: SortOrder
@@ -10746,6 +10804,8 @@ export namespace Prisma {
 
   export type CustomerCreateWithoutOrdersInput = {
     nombre: string
+    direccion: string
+    cedula: string
     email?: string | null
     telefono?: string | null
     activo?: boolean
@@ -10756,6 +10816,8 @@ export namespace Prisma {
   export type CustomerUncheckedCreateWithoutOrdersInput = {
     id?: number
     nombre: string
+    direccion: string
+    cedula: string
     email?: string | null
     telefono?: string | null
     activo?: boolean
@@ -10830,6 +10892,8 @@ export namespace Prisma {
 
   export type CustomerUpdateWithoutOrdersInput = {
     nombre?: StringFieldUpdateOperationsInput | string
+    direccion?: StringFieldUpdateOperationsInput | string
+    cedula?: StringFieldUpdateOperationsInput | string
     email?: NullableStringFieldUpdateOperationsInput | string | null
     telefono?: NullableStringFieldUpdateOperationsInput | string | null
     activo?: BoolFieldUpdateOperationsInput | boolean
@@ -10840,6 +10904,8 @@ export namespace Prisma {
   export type CustomerUncheckedUpdateWithoutOrdersInput = {
     id?: IntFieldUpdateOperationsInput | number
     nombre?: StringFieldUpdateOperationsInput | string
+    direccion?: StringFieldUpdateOperationsInput | string
+    cedula?: StringFieldUpdateOperationsInput | string
     email?: NullableStringFieldUpdateOperationsInput | string | null
     telefono?: NullableStringFieldUpdateOperationsInput | string | null
     activo?: BoolFieldUpdateOperationsInput | boolean

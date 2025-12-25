@@ -2,20 +2,19 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { z } from 'zod';
 
-const tableSchema = z.object({
-  numero: z.string().min(1),
-  capacidad: z.number().int().positive().optional().nullable(),
+const categorySchema = z.object({
+  nombre: z.string().min(1),
 });
 
 export async function GET() {
   try {
-    const tables = await prisma.table.findMany({
+    const categories = await prisma.category.findMany({
       orderBy: { createdAt: 'desc' },
     });
-    return NextResponse.json(tables);
+    return NextResponse.json(categories);
   } catch (error) {
     return NextResponse.json(
-      { error: 'Failed to fetch tables', details: error },
+      { error: 'Failed to fetch categories', details: error },
       { status: 500 }
     );
   }
@@ -24,12 +23,12 @@ export async function GET() {
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const data = tableSchema.parse(body);
+    const data = categorySchema.parse(body);
     
-    const table = await prisma.table.create({
+    const category = await prisma.category.create({
       data,
     });
-    return NextResponse.json(table, { status: 201 });
+    return NextResponse.json(category, { status: 201 });
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
@@ -38,8 +37,9 @@ export async function POST(req: NextRequest) {
       );
     }
     return NextResponse.json(
-      { error: 'Failed to create table', details: error },
+      { error: 'Failed to create category', details: error },
       { status: 500 }
     );
   }
 }
+

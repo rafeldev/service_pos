@@ -19,7 +19,7 @@ export default function Header() {
           Mesas
         </Link>
         <Link 
-          href="/pos/inscribir" 
+          href="/pos" 
           className="text-gray-700 hover:text-gray-900 font-medium transition-colors"
         >
           Inscribir
