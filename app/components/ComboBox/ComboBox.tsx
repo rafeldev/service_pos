@@ -56,7 +56,7 @@ export function ComboboxDemo({ items, placeholder, value, setValue }: ComboboxPr
         <Command>
           <CommandInput placeholder={placeholder} className="h-9" />
           <CommandList>
-            <CommandEmpty>No framework found.</CommandEmpty>
+            <CommandEmpty>No se encontraron resultados.</CommandEmpty>
             <CommandGroup>
               {items?.map((item) => (
                 <CommandItem

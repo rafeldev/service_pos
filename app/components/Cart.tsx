@@ -10,29 +10,7 @@ import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { useQuery } from '@tanstack/react-query';
 import { getTables } from '@/services/api/tables';
-
-const items = [
-  {
-    value: "next.js",
-    label: "Next.js",
-  },
-  {
-    value: "sveltekit",
-    label: "SvelteKit",
-  },
-  {
-    value: "nuxt.js",
-    label: "Nuxt.js",
-  },
-  {
-    value: "remix",
-    label: "Remix",
-  },
-  {
-    value: "astro",
-    label: "Astro",
-  },
-]
+import { getCustomers } from "@/services/api/customers";
 
 export default function Cart() {
   const { currentOrder, setCustomer, setTable, submitOrder } = useOrderStore();
@@ -43,9 +21,19 @@ export default function Cart() {
     queryFn: getTables,
   });
 
+  const { data: customers, isLoading: customersLoading } = useQuery({
+    queryKey: ['customers'],
+    queryFn: getCustomers,
+  });
+
   const tableOptions = tables?.map((table: Table) => ({
     value: String(table.id),
     label: table.numero,
+  })) || [];
+
+  const customerOptions = customers?.map((customer: Customer) => ({
+    value: String(customer.id),
+    label: customer.nombre,
   })) || [];
 
 
@@ -91,8 +79,8 @@ export default function Cart() {
         <div className="flex flex-1 flex-col gap-0">
           <Label className="text-sm font-medium mb-0">Clientes</Label>
           <ComboboxDemo
-            items={items}
-            placeholder="Selecciona un cliente"
+            items={customerOptions}
+            placeholder={customersLoading ? "Cargando..." : "Selecciona un cliente"}
             value={customerValue}
             setValue={setCustomer}
 

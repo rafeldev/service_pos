@@ -48,6 +48,8 @@ model Product {
 model Customer {
   id        Int       @id @default(autoincrement())
   nombre    String   @db.VarChar(200)
+  direccion String   @db.VarChar(200)
+  cedula    String   @unique @db.VarChar(200)
   email     String?  @db.VarChar(255)
   telefono  String?  @db.VarChar(20)
   activo    Boolean  @default(true)
