@@ -21,10 +21,10 @@ import {
 import { toast } from "sonner"
 import type { Table } from "@/app/types/tableTypes"
 import LoadingTable from "./LoadingTable"
+import { Spinner } from "@/components/ui/spinner"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 
 export function TablesTable() {
-  const [tables, setTables] = useState<Table[]>([])
-  const [loading, setLoading] = useState(true)
   const [isDialogOpen, setIsDialogOpen] = useState(false)
   const [editingTable, setEditingTable] = useState<Table | null>(null)
   const [formData, setFormData] = useState({
@@ -32,21 +32,13 @@ export function TablesTable() {
     capacidad: "",
   })
 
-  const loadTables = async () => {
-    try {
-      setLoading(true)
-      const data = await getTables()
-      setTables(data)
-    } catch {
-      toast.error("Error al cargar mesas")
-    } finally {
-      setLoading(false)
-    }
-  }
+  const queryClient = useQueryClient()
 
-  useEffect(() => {
-    loadTables()
-  }, [])
+
+  const { data: tablesData = [], isLoading: loading } = useQuery({
+    queryKey: ["tables"],
+    queryFn: getTables,
+  });
 
   const handleCreate = () => {
     setEditingTable(null)
@@ -66,41 +58,62 @@ export function TablesTable() {
     setIsDialogOpen(true)
   }
 
-  const handleDelete = async (table: Table) => {
-    if (!confirm(`¿Estás seguro de eliminar la ${table.numero}?`)) return
-
-    try {
-      await deleteTable(table.id)
-      toast.success("Mesa eliminada correctamente")
-      loadTables()
-    } catch {
-      toast.error("Error al eliminar mesa")
+  const deleteTableMutation = useMutation({
+    mutationFn: (id: number) => deleteTable(id),
+    onSuccess: () => {
+      toast.success("Mesa eliminada correctamente");
+      queryClient.invalidateQueries({ queryKey: ["tables"] });
+    },
+    onError: () => {
+      toast.error("Error al eliminar mesa");
     }
-  }
+  });
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    try {
-      const data: { numero: string; capacidad?: number } = {
-        numero: formData.numero,
-      }
-      if (formData.capacidad) {
-        data.capacidad = parseInt(formData.capacidad)
-      }
-
-      if (editingTable) {
-        await updateTable(editingTable.id, data)
-        toast.success("Mesa actualizada correctamente")
-      } else {
-        await createTable(data)
-        toast.success("Mesa creada correctamente")
-      }
+  const createTableMutation = useMutation({
+    mutationFn: createTable,
+    onSuccess: () => {
+      toast.success("Mesa creada correctamente")
       setIsDialogOpen(false)
-      loadTables()
-    } catch (error: unknown) {
+      queryClient.invalidateQueries({ queryKey: ["tables"] })
+    },
+    onError: (error: unknown) => {
       const message = error instanceof Error ? error.message : "Error al guardar mesa"
       toast.error(message)
     }
+  })
+
+  const updateTableMutation = useMutation({
+    mutationFn: ({ id, data }: { id: number; data: { numero: string; capacidad?: number } }) => updateTable(id, data),
+    onSuccess: () => {
+      toast.success("Mesa actualizada correctamente")
+      setIsDialogOpen(false)
+      queryClient.invalidateQueries({ queryKey: ["tables"] })
+    },
+    onError: (error: unknown) => {
+      const message = error instanceof Error ? error.message : "Error al guardar mesa"
+      toast.error(message)
+    }
+  })
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    const data: { numero: string; capacidad?: number } = {
+      numero: formData.numero,
+    }
+    if (formData.capacidad) {
+      data.capacidad = parseInt(formData.capacidad)
+    }
+
+    if (editingTable) {
+      updateTableMutation.mutate({ id: editingTable.id, data })
+    } else {
+      createTableMutation.mutate(data)
+    }
+  }
+
+  const handleDelete = (table: Table) => {
+    if (!confirm(`¿Estás seguro de eliminar la ${table.numero}?`)) return;
+    deleteTableMutation.mutate(table.id);
   }
 
   const columns = [
@@ -127,6 +140,8 @@ export function TablesTable() {
     },
   ]
 
+  const isLoading = createTableMutation.isPending || updateTableMutation.isPending
+  
   if (loading) {
     return <LoadingTable message="Cargando mesas..." color="red" />
   }
@@ -135,7 +150,7 @@ export function TablesTable() {
     <>
       <DataTable
         title="Mesas"
-        data={tables}
+        data={tablesData}
         columns={columns}
         onEdit={handleEdit}
         onDelete={handleDelete}
@@ -151,7 +166,7 @@ export function TablesTable() {
             </DialogTitle>
           </DialogHeader>
           <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
+            <div className="flex flex-col gap-2">
               <Label htmlFor="numero">Número *</Label>
               <Input
                 id="numero"
@@ -162,7 +177,7 @@ export function TablesTable() {
                 required
               />
             </div>
-            <div>
+            <div className="flex flex-col gap-2">
               <Label htmlFor="capacidad">Capacidad</Label>
               <Input
                 id="capacidad"
@@ -182,7 +197,14 @@ export function TablesTable() {
               >
                 Cancelar
               </Button>
-              <Button type="submit">Guardar</Button>
+              <Button type="submit" disabled={isLoading}>
+                {isLoading ? (
+                  <>
+                    <Spinner className="mr-2 h-4 w-4" />
+                    Guardando...
+                  </>
+                ) : "Guardar"}
+              </Button>
             </DialogFooter>
           </form>
         </DialogContent>

@@ -1,32 +1,54 @@
 "use client";
 
 import Link from "next/link";
-import { HiOutlineSearch, HiMenu } from "react-icons/hi";
+import { usePathname } from "next/navigation";
+import { HiOutlineSearch } from "react-icons/hi";
 import { FaUserCircle } from "react-icons/fa";
 import { useState } from "react";
 import { MenuPopover } from "./MenuPopover/MenuPopover";
 
 export default function Header() {
   const [open, setOpen] = useState(false);
+  const pathname = usePathname();
+
+  const isActive = (path: string) => {
+    if (path === "/pos") {
+      return pathname === "/pos";
+    }
+    return pathname.startsWith(path);
+  };
+
   return (
     <header className="h-14 flex items-center justify-between px-4 border-b border-gray-200">
       {/* Contenedor Izquierdo - Navegación */}
       <nav className="flex items-center gap-6">
         <Link 
           href="/pos/mesas" 
-          className="text-gray-700 hover:text-gray-900 font-medium transition-colors"
+          className={`font-medium transition-colors ${
+            isActive("/pos/mesas")
+              ? "text-cyan-600 border-b-2 border-cyan-600 pb-1"
+              : "text-gray-700 hover:text-gray-900"
+          }`}
         >
           Mesas
         </Link>
         <Link 
           href="/pos" 
-          className="text-gray-700 hover:text-gray-900 font-medium transition-colors"
+          className={`font-medium transition-colors ${
+            isActive("/pos")
+              ? "text-cyan-600 border-b-2 border-cyan-600 pb-1"
+              : "text-gray-700 hover:text-gray-900"
+          }`}
         >
           Inscribir
         </Link>
         <Link 
           href="/pos/pedidos" 
-          className="text-gray-700 hover:text-gray-900 font-medium transition-colors"
+          className={`font-medium transition-colors ${
+            isActive("/pos/pedidos")
+              ? "text-cyan-600 border-b-2 border-cyan-600 pb-1"
+              : "text-gray-700 hover:text-gray-900"
+          }`}
         >
           Pedidos
         </Link>

@@ -9,6 +9,16 @@ const categorySchema = z.object({
 export async function GET() {
   try {
     const categories = await prisma.category.findMany({
+      include: {
+        productos: {
+          select: {
+            id: true,
+            nombre: true,
+            precio: true,
+            activo: true,
+          },
+        },
+      },
       orderBy: { createdAt: 'desc' },
     });
     return NextResponse.json(categories);
@@ -32,7 +42,7 @@ export async function POST(req: NextRequest) {
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
-        { error: 'Validation error', details: error.errors },
+        { error: 'Validation error', details: error.issues },
         { status: 400 }
       );
     }

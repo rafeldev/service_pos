@@ -1,10 +1,27 @@
-export async function getCategories() {
+type Category = {
+  nombre: string
+}
+
+type CategoryWithProducts = {
+  id: number
+  nombre: string
+  createdAt: string
+  updatedAt: string
+  productos: Array<{
+    id: number
+    nombre: string
+    precio: string
+    activo: boolean
+  }>
+}
+
+export async function getCategories(): Promise<CategoryWithProducts[]> {
   const res = await fetch('/api/categories');
   if (!res.ok) throw new Error('Failed to fetch categories');
   return res.json();
 }
 
-export async function createCategory(data: any) {
+export async function createCategory(data: Category) {
   const res = await fetch('/api/categories', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -14,7 +31,7 @@ export async function createCategory(data: any) {
   return res.json();
 }
 
-export async function updateCategory(id: number, data: any) {
+export async function updateCategory(id: number, data: Category) {
   const res = await fetch(`/api/categories/${id}`, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
@@ -31,4 +48,3 @@ export async function deleteCategory(id: number) {
   if (!res.ok) throw new Error('Failed to delete category');
   return res.json();
 }
-

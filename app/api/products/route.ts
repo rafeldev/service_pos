@@ -11,9 +11,17 @@ const productSchema = z.object({
   activo: z.boolean().optional(),
 });
 
-export async function GET() {
+export async function GET(req: NextRequest) {
   try {
+    const { searchParams } = new URL(req.url);
+    const categoriaId = searchParams.get('categoriaId');
+    
+    const where = categoriaId 
+      ? { categoriaId: parseInt(categoriaId), activo: true }
+      : { activo: true };
+    
     const products = await prisma.product.findMany({
+      where,
       include: { categoria: true },
       orderBy: { createdAt: 'desc' },
     });
@@ -42,7 +50,7 @@ export async function POST(req: NextRequest) {
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
-        { error: 'Validation error', details: error.errors },
+        { error: 'Validation error', details: error.issues },
         { status: 400 }
       );
     }

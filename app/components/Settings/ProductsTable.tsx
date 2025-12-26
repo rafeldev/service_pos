@@ -1,6 +1,7 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState } from "react"
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import { DataTable } from "../DataTable/DataTable"
 import { Button } from "@/components/ui/button"
 import {
@@ -21,6 +22,7 @@ import {
 import { getCategories } from "@/services/api/categories"
 import { toast } from "sonner"
 import LoadingTable from "./LoadingTable"
+import { Spinner } from "@/components/ui/spinner"
 
 type Product = {
   id: number
@@ -44,9 +46,7 @@ type Category = {
 }
 
 export function ProductsTable() {
-  const [products, setProducts] = useState<Product[]>([])
-  const [categories, setCategories] = useState<Category[]>([])
-  const [loading, setLoading] = useState(true)
+  const queryClient = useQueryClient()
   const [isDialogOpen, setIsDialogOpen] = useState(false)
   const [editingProduct, setEditingProduct] = useState<Product | null>(null)
   const [formData, setFormData] = useState({
@@ -57,31 +57,71 @@ export function ProductsTable() {
     categoriaId: "",
   })
 
-  const loadProducts = async () => {
-    try {
-      setLoading(true)
-      const data = await getProducts()
-      setProducts(data)
-    } catch {
-      toast.error("Error al cargar productos")
-    } finally {
-      setLoading(false)
-    }
-  }
+  // Query para productos
+  const {
+    data: products = [],
+    isLoading: loadingProducts,
+  } = useQuery({
+    queryKey: ["products"],
+    queryFn: () => getProducts(),
+  })
 
-  const loadCategories = async () => {
-    try {
-      const data = await getCategories()
-      setCategories(data)
-    } catch {
-      toast.error("Error al cargar categorías")
-    }
-  }
+  // Query para categorías
+  const {
+    data: categories = [],
+  } = useQuery({
+    queryKey: ["categories"],
+    queryFn: getCategories,
+  })
 
-  useEffect(() => {
-    loadProducts()
-    loadCategories()
-  }, [])
+  // Mutation para crear producto
+  const createMutation = useMutation({
+    mutationFn: createProduct,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["products"] })
+      toast.success("Producto creado correctamente")
+      setIsDialogOpen(false)
+    },
+    onError: (error: unknown) => {
+      const message = error instanceof Error ? error.message : "Error al crear producto"
+      toast.error(message)
+    },
+  })
+
+  // Mutation para actualizar producto
+  const updateMutation = useMutation({
+    mutationFn: ({ id, data }: { 
+      id: number
+      data: {
+        nombre: string
+        descripcion: string | null
+        precio: number
+        categoriaId: number
+        imagen?: string
+      }
+    }) => updateProduct(id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["products"] })
+      toast.success("Producto actualizado correctamente")
+      setIsDialogOpen(false)
+    },
+    onError: (error: unknown) => {
+      const message = error instanceof Error ? error.message : "Error al actualizar producto"
+      toast.error(message)
+    },
+  })
+
+  // Mutation para eliminar producto
+  const deleteMutation = useMutation({
+    mutationFn: deleteProduct,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["products"] })
+      toast.success("Producto eliminado correctamente")
+    },
+    onError: () => {
+      toast.error("Error al eliminar producto")
+    },
+  })
 
   const handleCreate = () => {
     setEditingProduct(null)
@@ -107,49 +147,33 @@ export function ProductsTable() {
     setIsDialogOpen(true)
   }
 
-  const handleDelete = async (product: Product) => {
+  const handleDelete = (product: Product) => {
     if (!confirm(`¿Estás seguro de eliminar ${product.nombre}?`)) return
-
-    try {
-      await deleteProduct(product.id)
-      toast.success("Producto eliminado correctamente")
-      loadProducts()
-    } catch {
-      toast.error("Error al eliminar producto")
-    }
+    deleteMutation.mutate(product.id)
   }
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    try {
-      const data: {
-        nombre: string
-        descripcion: string | null
-        precio: number
-        categoriaId: number
-        imagen?: string
-      } = {
-        nombre: formData.nombre,
-        descripcion: formData.descripcion || null,
-        precio: parseFloat(formData.precio),
-        categoriaId: parseInt(formData.categoriaId),
-      }
-      if (formData.imagen) {
-        data.imagen = formData.imagen
-      }
+    const data: {
+      nombre: string
+      descripcion: string | null
+      precio: number
+      categoriaId: number
+      imagen?: string
+    } = {
+      nombre: formData.nombre,
+      descripcion: formData.descripcion || null,
+      precio: parseFloat(formData.precio),
+      categoriaId: parseInt(formData.categoriaId),
+    }
+    if (formData.imagen) {
+      data.imagen = formData.imagen
+    }
 
-      if (editingProduct) {
-        await updateProduct(editingProduct.id, data)
-        toast.success("Producto actualizado correctamente")
-      } else {
-        await createProduct(data)
-        toast.success("Producto creado correctamente")
-      }
-      setIsDialogOpen(false)
-      loadProducts()
-    } catch (error: unknown) {
-      const message = error instanceof Error ? error.message : "Error al guardar producto"
-      toast.error(message)
+    if (editingProduct) {
+      updateMutation.mutate({ id: editingProduct.id, data })
+    } else {
+      createMutation.mutate(data)
     }
   }
 
@@ -182,7 +206,9 @@ export function ProductsTable() {
     },
   ]
 
-  if (loading) {
+  const isLoading = loadingProducts || createMutation.isPending || updateMutation.isPending
+
+  if (loadingProducts) {
     return <LoadingTable message="Cargando productos..." color="red" />
   }
 
@@ -206,7 +232,7 @@ export function ProductsTable() {
             </DialogTitle>
           </DialogHeader>
           <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
+            <div className="flex flex-col gap-2">
               <Label htmlFor="nombre">Nombre *</Label>
               <Input
                 id="nombre"
@@ -217,7 +243,7 @@ export function ProductsTable() {
                 required
               />
             </div>
-            <div>
+            <div className="flex flex-col gap-2">
               <Label htmlFor="descripcion">Descripción</Label>
               <Input
                 id="descripcion"
@@ -228,7 +254,7 @@ export function ProductsTable() {
               />
             </div>
             <div className="grid grid-cols-2 gap-4">
-              <div>
+              <div className="flex flex-col gap-2">
                 <Label htmlFor="precio">Precio *</Label>
                 <Input
                   id="precio"
@@ -242,7 +268,7 @@ export function ProductsTable() {
                   required
                 />
               </div>
-              <div>
+              <div className="flex flex-col gap-2">
                 <Label htmlFor="categoriaId">Categoría *</Label>
                 <select
                   id="categoriaId"
@@ -254,7 +280,7 @@ export function ProductsTable() {
                   required
                 >
                   <option value="">Seleccionar categoría</option>
-                  {categories.map((cat) => (
+                  {categories.map((cat: Category) => (
                     <option key={cat.id} value={cat.id}>
                       {cat.nombre}
                     </option>
@@ -262,7 +288,7 @@ export function ProductsTable() {
                 </select>
               </div>
             </div>
-            <div>
+            <div className="flex flex-col gap-2">
               <Label htmlFor="imagen">URL de Imagen</Label>
               <Input
                 id="imagen"
@@ -280,7 +306,16 @@ export function ProductsTable() {
               >
                 Cancelar
               </Button>
-              <Button type="submit">Guardar</Button>
+              <Button type="submit" disabled={isLoading}>
+                {isLoading ? (
+                  <>
+                    <Spinner className="mr-2 h-4 w-4" />
+                    Guardando...
+                  </>
+                ) : (
+                  "Guardar"
+                )}
+              </Button>
             </DialogFooter>
           </form>
         </DialogContent>
