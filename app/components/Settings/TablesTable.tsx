@@ -19,7 +19,7 @@ import {
   deleteTable,
 } from "@/services/api/tables"
 import { toast } from "sonner"
-import type { Table } from "@/app/types/tableTypes"
+import type { Table } from "@/app/types/domain/tableTypes"
 import LoadingTable from "./LoadingTable"
 import { Spinner } from "@/components/ui/spinner"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
