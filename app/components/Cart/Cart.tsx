@@ -1,10 +1,10 @@
 "use client";
 
 import { TbShoppingCartFilled } from "react-icons/tb";
-import { ComboboxDemo } from "./ComboBox/ComboBox";
+import { ComboboxDemo } from "../ComboBox/ComboBox";
 import useOrderStore from "@/store/useOrderStore";
 import { Label } from "@/components/ui/label";
-import CartItem from "./CartItem/CartItem";
+import CartItem from "../CartItem/CartItem";
 import useCartStore from "@/store/useCartStore";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
@@ -12,6 +12,7 @@ import { useQuery } from '@tanstack/react-query';
 import { getTables } from '@/services/api/tables';
 import { getCustomers } from "@/services/api/customers";
 import { cn } from "@/lib/utils";
+import { formatCurrency } from "@/lib/formatters";
 
 export default function Cart() {
   const { currentOrder, setCustomer, setTable, submitOrder } = useOrderStore();
@@ -124,7 +125,7 @@ export default function Cart() {
             </div>
             <div className="flex justify-between">
               <p className="font-bold text-lg">Total:</p>
-              <p className="text-lg">{getTotal().toFixed(2)} USD</p>
+              <p className="text-lg font-bold">{formatCurrency(getTotal())}</p>
             </div>
           </div>
           <Button

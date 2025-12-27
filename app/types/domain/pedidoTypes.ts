@@ -1,5 +1,5 @@
 import type { Item } from './cartTypes';
-import type { CustomerInfo, TableInfo, Order as StoreOrder } from './storeTypes';
+import type { CustomerInfo, TableInfo, Order as StoreOrder } from '@/app/types/store/storeTypes';
 
 export type OrderItem = Item;
 

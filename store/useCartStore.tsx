@@ -1,9 +1,7 @@
 import { create } from 'zustand'
 import { devtools, persist } from 'zustand/middleware'
-import type { Item } from '@/app/types/cartTypes';
-import type { CartState } from '@/app/types/storeTypes';
+import type { CartState } from '@/app/types/store/storeTypes';
 
-export type { Item };
 
 const useCartStore = create<CartState>()(
   devtools(

@@ -1,9 +1,9 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { HiTrash } from "react-icons/hi";
-import type { OrderItemProps } from "@/app/types/orderItemTypes";
+import type { OrderItemProps } from "@/app/types/domain/orderItemTypes";
 import { cn } from "@/lib/utils";
-import { formatDate, formatTime } from "@/utils/formatters";
+import { formatDate, formatTime } from "@/lib/formatters";
 import useOrderStore from "@/store/useOrderStore";
 import { toast } from "sonner";
 

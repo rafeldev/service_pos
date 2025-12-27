@@ -9,7 +9,8 @@ import { HiInformationCircle } from "react-icons/hi";
 import { getCategories } from "@/services/api/categories";
 import { getProducts } from "@/services/api/products";
 import { useQuery } from "@tanstack/react-query";
-import type { Category } from "@/app/types/categoryTypes";
+import type { Category } from "@/app/types/domain/categoryTypes";
+import { formatCurrency } from "@/lib/formatters";
 
 
 type Producto = {
@@ -115,6 +116,7 @@ export default function PosPage() {
         <div className="flex flex-wrap gap-4">
           {productsData.map((producto: Producto) => {
             const precio = parseFloat(producto.precio);
+            const precioFormatted = formatCurrency(precio);
             return (
               <Card
                 key={producto.id}
@@ -143,7 +145,7 @@ export default function PosPage() {
                 {/* Contenido */}
                 <CardContent className="p-2 flex flex-col flex-1 justify-between gap-4">
                   <span className="font-medium text-gray-800 text-sm">{producto.nombre}</span>
-                  <span className="font-semibold text-red-500 text-md mt-auto">${precio}</span>
+                  <span className="font-semibold text-red-500 text-md mt-auto">{precioFormatted}</span>
                 </CardContent>
               </Card>
             );

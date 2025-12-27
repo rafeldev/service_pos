@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import { HiOutlineSearch } from "react-icons/hi";
 import { FaUserCircle } from "react-icons/fa";
 import { useState } from "react";
-import { MenuPopover } from "./MenuPopover/MenuPopover";
+import { MenuPopover } from "@/app/components/MenuPopover/MenuPopover";
 import useOrderStore from "@/store/useOrderStore";
 
 export default function Header() {

@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import type { OrderSummaryProps } from "@/app/types/orderSummaryTypes";
+import type { OrderSummaryProps } from "@/app/types/domain/orderSummaryTypes";
 import { X } from "lucide-react";
 
 export default function OrderSummary({ order, onClose, onLoadOrder }: OrderSummaryProps) {

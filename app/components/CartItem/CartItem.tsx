@@ -3,6 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { FiMinus, FiPlus } from "react-icons/fi";
 import useCartStore from "@/store/useCartStore";
+import { formatCurrency } from "@/lib/formatters";
 
 type CartItemProps = {
   id: number;
@@ -48,7 +49,7 @@ export default function CartItem({ id, nombre, descripcion, precio, cantidad }: 
 
       {/* Precio - Derecha */}
       <div className="text-right">
-        <p className="font-semibold text-gray-900">$ {(precio * cantidad).toFixed(2)}</p>
+        <p className="font-semibold text-gray-900">{formatCurrency(precio * cantidad)}</p>
       </div>
     </div>
   );

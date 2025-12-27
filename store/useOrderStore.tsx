@@ -1,7 +1,6 @@
 import { create } from 'zustand'
 import { devtools, persist } from 'zustand/middleware'
-import type { OrderState, CurrentOrder, Order  } from '@/app/types/storeTypes';
-export type { Item } from '@/app/types/cartTypes';
+import type { OrderState, CurrentOrder, Order  } from '@/app/types/store/storeTypes';
 
 const initialCurrentOrder: CurrentOrder = {
   customer: null,

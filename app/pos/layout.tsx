@@ -1,7 +1,7 @@
 "use client";
 
-import Header from "../components/Header";
-import Cart from "../components/Cart";
+import Header from "@/app/components/Header/Header";
+import Cart from "../components/Cart/Cart";
 import { usePathname } from "next/navigation";
 
 export default function PosLayout({

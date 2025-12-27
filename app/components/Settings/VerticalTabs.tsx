@@ -1,39 +1,56 @@
 "use client"
 
+import { useState } from "react"
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
 import { CustomersTable } from "./CustomersTable"
 import { TablesTable } from "./TablesTable"
 import { ProductsTable } from "./ProductsTable"
 import { CategoriesTable } from "./CategoriesTable"
+import { cn } from "@/lib/utils"
 
 export function VerticalTabs() {
+  const [activeTab, setActiveTab] = useState("customers")
+  console.log(activeTab, 'activeTab');
+
   return (
     <div className="flex h-full min-h-screen">
-      <Tabs defaultValue="customers" className="flex flex-row w-full">
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="flex flex-row w-full">
         {/* Sidebar */}
-        <aside className="w-64 border-r bg-muted/30 p-4">
-          <TabsList className="flex-col h-auto w-full bg-transparent p-0 gap-2">
+        <aside className="w-64 border-r bg-muted/30 p-0">
+          <TabsList className="flex-col h-auto w-full bg-transparent p-0 gap-0">
             <TabsTrigger 
               value="customers" 
-              className="w-full justify-start px-4 py-3 h-auto data-[state=active]:bg-background data-[state=active]:shadow-sm"
+              className={cn(
+                "w-full rounded-none justify-start px-4 py-3 h-auto transition-colors text-md",
+                activeTab === "customers" && "!bg-gray-400 text-white shadow-sm font-medium"
+              )}
             >
               Clientes
             </TabsTrigger>
             <TabsTrigger 
               value="tables" 
-              className="w-full justify-start px-4 py-3 h-auto data-[state=active]:bg-background data-[state=active]:shadow-sm"
+              className={cn(
+                "w-full rounded-none justify-start px-4 py-3 h-auto transition-colors text-md",
+                activeTab === "tables" && "!bg-gray-400 text-white shadow-sm font-medium"
+              )}
             >
               Mesas
             </TabsTrigger>
             <TabsTrigger 
               value="products" 
-              className="w-full justify-start px-4 py-3 h-auto data-[state=active]:bg-background data-[state=active]:shadow-sm"
+              className={cn(
+                "w-full rounded-none justify-start px-4 py-3 h-auto transition-colors text-md",
+                activeTab === "products" && "!bg-gray-400 text-white shadow-sm font-medium"
+              )}
             >
               Productos
             </TabsTrigger>
             <TabsTrigger 
               value="categories" 
-              className="w-full justify-start px-4 py-3 h-auto data-[state=active]:bg-background data-[state=active]:shadow-sm"
+              className={cn(
+                "w-full rounded-none justify-start px-4 py-3 h-auto transition-colors text-md",
+                activeTab === "categories" && "!bg-gray-400 text-white shadow-sm font-medium"
+              )}
             >
               Categorías
             </TabsTrigger>

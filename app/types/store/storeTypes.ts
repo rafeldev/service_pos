@@ -1,4 +1,4 @@
-import type { Item } from './cartTypes';
+import type { Item } from '@/app/types/domain/cartTypes';
 
 // Tipos para el store de órdenes
 export type CustomerInfo = {

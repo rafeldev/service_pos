@@ -14,7 +14,7 @@ import { HiChevronLeft, HiChevronRight } from 'react-icons/hi';
 import { ChevronDown } from 'lucide-react';
 import OrderItem from '@/app/components/ItemOrder/ItemOrder';
 import OrderSummary from '@/app/components/OrderSummary/OrderSummary';
-import type { Order } from '@/app/types/pedidoTypes';
+import type { Order } from '@/app/types/store/storeTypes';
 import useOrderStore from '@/store/useOrderStore';
 
 type OrderType = 'Comer en el local' | 'Para llevar' | 'Entrega' | 'all';
