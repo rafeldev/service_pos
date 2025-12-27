@@ -50,40 +50,41 @@ export default function PedidosPage() {
       {/* Barra de Filtros */}
       <div className="flex items-center justify-between gap-4 p-4 border-b bg-white">
         {/* Búsqueda */}
-        <div className="relative flex-1 max-w-md">
+        <div className="relative flex items-center max-w-md">
           <HiOutlineSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 w-5 h-5" />
           <Input
             type="text"
             placeholder="Buscar órdenes..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-10"
+            className="pl-10 w-[500px] rounded"
           />
+          {/* Filtro de Estado */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" className="gap-2 rounded border-l-none s">
+                {selectedStatus}
+                <ChevronDown className="w-4 h-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent>
+              <DropdownMenuItem onClick={() => setSelectedStatus('Activo')}>
+                Activo
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setSelectedStatus('Completado')}>
+                Completado
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setSelectedStatus('Cancelado')}>
+                Cancelado
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setSelectedStatus('all')}>
+                Todos
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
 
-        {/* Filtro de Estado */}
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="gap-2">
-              {selectedStatus}
-              <ChevronDown className="w-4 h-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent>
-            <DropdownMenuItem onClick={() => setSelectedStatus('Activo')}>
-              Activo
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => setSelectedStatus('Completado')}>
-              Completado
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => setSelectedStatus('Cancelado')}>
-              Cancelado
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => setSelectedStatus('all')}>
-              Todos
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+
 
         {/* Botones de Tipo */}
         <div className="flex gap-2">
@@ -111,7 +112,7 @@ export default function PedidosPage() {
         </div>
 
         {/* Paginación */}
-        <div className="flex items-center gap-2">
+        {/* <div className="flex items-center gap-2">
           <Button
             variant="outline"
             size="icon"
@@ -131,27 +132,36 @@ export default function PedidosPage() {
           >
             <HiChevronRight className="w-5 h-5" />
           </Button>
-        </div>
+        </div> */}
       </div>
 
       {/* Contenedor Principal con Sidebar */}
       <div className="flex flex-1 overflow-hidden relative">
         {/* Lista de Órdenes */}
-        <div className={`flex-1 overflow-y-auto p-4 space-y-3 transition-all ${selectedOrder ? 'mr-96' : ''}`}>
-          {orders.map((order) => (
-            <div
-              key={order.id}
-              onClick={() => handleOrderClick(order)}
-              className="cursor-pointer"
-            >
-              <OrderItem 
-                order={order} 
-                isSelected={selectedOrder?.id === order.id}
-                onDelete={handleDeleteOrder}
-              />
+        {
+          orders.length > 0 ? (
+            <div className={`flex-1 overflow-y-auto p-4 space-y-3 transition-all ${selectedOrder ? 'mr-96' : ''}`}>
+              {orders.map((order) => (
+                <div
+                  key={order.id}
+                  onClick={() => handleOrderClick(order)}
+                  className="cursor-pointer"
+                >
+                  <OrderItem
+                    order={order}
+                    isSelected={selectedOrder?.id === order.id}
+                    onDelete={handleDeleteOrder}
+                  />
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
+          ) : (
+            <div className="flex-1 overflow-y-auto p-4 space-y-3 transition-all">
+              <p className="text-center text-gray-500">No hay órdenes pendientes</p>
+            </div>
+          )
+        }
+
 
         {/* Sidebar de Resumen */}
         {selectedOrder && (
