@@ -11,6 +11,7 @@ import { toast } from "sonner";
 import { useQuery } from '@tanstack/react-query';
 import { getTables } from '@/services/api/tables';
 import { getCustomers } from "@/services/api/customers";
+import { cn } from "@/lib/utils";
 
 export default function Cart() {
   const { currentOrder, setCustomer, setTable, submitOrder } = useOrderStore();
@@ -36,9 +37,26 @@ export default function Cart() {
     label: customer.nombre,
   })) || [];
 
+  const tableValue = currentOrder.table ? String(currentOrder.table.id) : null;
+  const customerValue = currentOrder.customer ? String(currentOrder.customer.id) : null;
 
-  const tableValue = currentOrder.table;
-  const customerValue = currentOrder.customer;
+  const handleTableChange = (value: string) => {
+    const selectedTable = tables?.find((t: Table) => String(t.id) === value);
+    if (selectedTable) {
+      setTable({ id: selectedTable.id, numero: selectedTable.numero });
+    } else {
+      setTable(null);
+    }
+  };
+
+  const handleCustomerChange = (value: string) => {
+    const selectedCustomer = customers?.find((c: Customer) => String(c.id) === value);
+    if (selectedCustomer) {
+      setCustomer({ id: selectedCustomer.id, nombre: selectedCustomer.nombre });
+    } else {
+      setCustomer(null);
+    }
+  };
 
 
   // Al confirmar la orden
@@ -72,8 +90,7 @@ export default function Cart() {
             items={tableOptions}
             placeholder={isLoading ? "Cargando..." : "Selecciona una mesa"}
             value={tableValue}
-            setValue={setTable}
-
+            setValue={handleTableChange}
           />
         </div>
         <div className="flex flex-1 flex-col gap-0">
@@ -82,8 +99,7 @@ export default function Cart() {
             items={customerOptions}
             placeholder={customersLoading ? "Cargando..." : "Selecciona un cliente"}
             value={customerValue}
-            setValue={setCustomer}
-
+            setValue={handleCustomerChange}
           />
         </div>
       </div>
@@ -103,15 +119,22 @@ export default function Cart() {
           </div>
           <div>
             <div className="flex justify-between">
-            <p>Impuestos:</p>
-            <p>10%</p>
+              <p>Impuestos:</p>
+              <p>10%</p>
             </div>
             <div className="flex justify-between">
               <p className="font-bold text-lg">Total:</p>
               <p className="text-lg">{getTotal().toFixed(2)} USD</p>
             </div>
           </div>
-          <Button onClick={handleSubmitOrder}>Submit Order</Button>
+          <Button
+            onClick={handleSubmitOrder}
+            disabled={!currentOrder.customer || !currentOrder.table}
+            className={cn(
+              "w-full",
+              !currentOrder.customer || !currentOrder.table && "opacity-50 cursor-not-allowed"
+            )}
+          >Submit Order</Button>
 
         </>
       ) : (

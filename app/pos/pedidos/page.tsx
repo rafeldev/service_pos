@@ -15,31 +15,7 @@ import { ChevronDown } from 'lucide-react';
 import OrderItem from '@/app/components/ItemOrder/ItemOrder';
 import OrderSummary from '@/app/components/OrderSummary/OrderSummary';
 import type { Order } from '@/app/types/pedidoTypes';
-
-// Mock data para las órdenes
-const mockOrders: Order[] = [
-  {
-    id: '251-1-000001',
-    fecha: 'Hoy',
-    hora: '03:41',
-    tipo: 'Comer en el local',
-    mesa: 'Mesa 1',
-    total: 18.45,
-    estado: 'En curso',
-    tableId: 'T 1',
-    items: [
-      {
-        id: 1,
-        nombre: 'Bacon Burger',
-        cantidad: 1,
-        precio: 15.50,
-        modificaciones: ['Belgian fresh homemade fries'],
-      },
-    ],
-    impuestos: 2.95,
-    subtotal: 15.50,
-  },
-];
+import useOrderStore from '@/store/useOrderStore';
 
 type OrderType = 'Comer en el local' | 'Para llevar' | 'Entrega' | 'all';
 type OrderStatus = 'Activo' | 'Completado' | 'Cancelado' | 'all';
@@ -52,7 +28,8 @@ export default function PedidosPage() {
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const totalPages = 1;
 
-  const orders = mockOrders;
+  const { orders } = useOrderStore();
+  console.log(orders, 'orders');
 
   const handleOrderClick = (order: Order) => {
     setSelectedOrder(order);
@@ -61,6 +38,11 @@ export default function PedidosPage() {
   const handleLoadOrder = () => {
     // TODO: Implementar carga de orden
     console.log('Cargar orden:', selectedOrder?.id);
+  };
+
+  const handleDeleteOrder = () => {
+    // Cerrar el sidebar si la orden eliminada estaba seleccionada
+    setSelectedOrder(null);
   };
 
   return (
@@ -162,7 +144,11 @@ export default function PedidosPage() {
               onClick={() => handleOrderClick(order)}
               className="cursor-pointer"
             >
-              <OrderItem order={order} isSelected={selectedOrder?.id === order.id} />
+              <OrderItem 
+                order={order} 
+                isSelected={selectedOrder?.id === order.id}
+                onDelete={handleDeleteOrder}
+              />
             </div>
           ))}
         </div>

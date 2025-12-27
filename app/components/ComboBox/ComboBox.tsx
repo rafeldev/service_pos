@@ -19,17 +19,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover"
 import { useRouter } from "next/navigation"
-
-type Item = {
-  value: string;
-  label: string;
-}
-type ComboboxProps = {
-  items: Item[];
-  placeholder: string;
-  value: string | null;
-  setValue: (value: string) => void;
-}
+import type { ComboboxProps } from "@/app/types/comboboxTypes";
 
 export function ComboboxDemo({ items, placeholder, value, setValue }: ComboboxProps) {
   const [open, setOpen] = React.useState(false)

@@ -1,4 +1,4 @@
-export type Table = {
+type Table = {
   id: number;
   numero: string;
   capacidad: number | null;

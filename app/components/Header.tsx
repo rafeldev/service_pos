@@ -6,10 +6,13 @@ import { HiOutlineSearch } from "react-icons/hi";
 import { FaUserCircle } from "react-icons/fa";
 import { useState } from "react";
 import { MenuPopover } from "./MenuPopover/MenuPopover";
+import useOrderStore from "@/store/useOrderStore";
 
 export default function Header() {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
+  const { orders } = useOrderStore();
+  const ordersCount = orders.length;
 
   const isActive = (path: string) => {
     if (path === "/pos") {
@@ -44,13 +47,18 @@ export default function Header() {
         </Link>
         <Link 
           href="/pos/pedidos" 
-          className={`font-medium transition-colors ${
+          className={`font-medium transition-colors relative ${
             isActive("/pos/pedidos")
               ? "text-cyan-600 border-b-2 border-cyan-600 pb-1"
               : "text-gray-700 hover:text-gray-900"
           }`}
         >
           Pedidos
+          {ordersCount > 0 && (
+            <span className="absolute -top-2 -right-6 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
+              {ordersCount > 99 ? '99+' : ordersCount}
+            </span>
+          )}
         </Link>
       </nav>
 

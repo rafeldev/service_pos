@@ -1,15 +1,39 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { HiTrash } from "react-icons/hi";
-import type { Order } from "@/app/types/pedidoTypes";
+import type { OrderItemProps } from "@/app/types/orderItemTypes";
 import { cn } from "@/lib/utils";
+import { formatDate, formatTime } from "@/utils/formatters";
+import useOrderStore from "@/store/useOrderStore";
+import { toast } from "sonner";
 
 // Componente para el Item de Orden
-export default function OrderItem({ order, isSelected = false }: { order: Order; isSelected?: boolean }) {
+export default function OrderItem({ order, isSelected = false, onDelete }: OrderItemProps) {
+  const { deleteOrder } = useOrderStore();
+
   const handleDelete = (e: React.MouseEvent) => {
     e.stopPropagation();
-    // TODO: Implementar eliminación
-    console.log('Eliminar orden:', order.id);
+    deleteOrder(order.id);
+    toast.success('Pedido eliminado');
+    // Si hay un callback, ejecutarlo (para cerrar el sidebar si estaba seleccionado)
+    if (onDelete) {
+      onDelete();
+    }
+  };
+
+  
+
+  // Mapear status a texto en español
+  const statusText = {
+    pending: 'En curso',
+    paid: 'Pagado',
+    cancelled: 'Cancelado'
+  };
+
+  const statusColors = {
+    pending: 'bg-gray-200 text-gray-700',
+    paid: 'bg-green-200 text-green-700',
+    cancelled: 'bg-red-200 text-red-700'
   };
 
   return (
@@ -23,26 +47,31 @@ export default function OrderItem({ order, isSelected = false }: { order: Order;
           <div className="flex items-center gap-4 flex-1">
             {/* Fecha y Hora */}
             <div className="flex flex-col min-w-[80px]">
-              <span className="text-sm font-medium text-gray-800">{order.fecha}</span>
-              <span className="text-xs text-gray-600">{order.hora}</span>
+              <span className="text-sm font-medium text-gray-800">
+                {formatDate(order.createdAt)}
+              </span>
+              <span className="text-xs text-gray-600">
+                {formatTime(order.createdAt)}
+              </span>
             </div>
 
-            {/* ID de Orden y Mesa */}
+            {/* ID de Orden */}
             <div className="flex flex-col gap-1">
-              <div className="flex items-center gap-2">
-                <span className="text-sm font-semibold text-gray-800">{order.tableId}</span>
-                <span className="text-xs text-gray-600">{order.id}</span>
-              </div>
+              <span className="text-xs text-gray-600">#{order.id}</span>
             </div>
 
-            {/* Tags de Tipo y Mesa */}
+            {/* Tags de Cliente y Mesa */}
             <div className="flex gap-2">
-              <span className="px-3 py-1 text-xs font-medium rounded-full bg-blue-100 text-blue-700">
-                {order.tipo}
-              </span>
-              <span className="px-3 py-1 text-xs font-medium rounded-full bg-red-100 text-red-700">
-                {order.mesa}
-              </span>
+              {order.customer && (
+                <span className="px-3 py-1 text-xs font-medium rounded-full bg-blue-100 text-blue-700">
+                  {order.customer.nombre}
+                </span>
+              )}
+              {order.table && (
+                <span className="px-3 py-1 text-xs font-medium rounded-full bg-red-100 text-red-700">
+                  Mesa {order.table.numero}
+                </span>
+              )}
             </div>
           </div>
 
@@ -56,8 +85,11 @@ export default function OrderItem({ order, isSelected = false }: { order: Order;
             </div>
 
             {/* Estado */}
-            <span className="px-3 py-1 text-xs font-medium rounded-full bg-gray-200 text-gray-700 min-w-[80px] text-center">
-              {order.estado}
+            <span className={cn(
+              "px-3 py-1 text-xs font-medium rounded-full min-w-[80px] text-center",
+              statusColors[order.status]
+            )}>
+              {statusText[order.status]}
             </span>
 
             {/* Botón Eliminar */}
