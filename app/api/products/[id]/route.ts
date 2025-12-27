@@ -20,7 +20,7 @@ export async function PUT(
     const body = await req.json();
     const data = productUpdateSchema.parse(body);
     
-    const updateData: any = { ...data };
+    const updateData: Record<string, unknown> = { ...data };
     if (data.precio !== undefined) {
       updateData.precio = data.precio.toString();
     }
@@ -34,7 +34,7 @@ export async function PUT(
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
-        { error: 'Validation error', details: error.errors },
+        { error: 'Validation error', details: error.issues },
         { status: 400 }
       );
     }
