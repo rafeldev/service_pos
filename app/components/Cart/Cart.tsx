@@ -13,6 +13,7 @@ import { getTables } from '@/services/api/tables';
 import { getCustomers } from "@/services/api/customers";
 import { cn } from "@/lib/utils";
 import { formatCurrency } from "@/lib/formatters";
+import type { Customer } from "@/app/types/domain/customerTypes";
 
 export default function Cart() {
   const { currentOrder, setCustomer, setTable, submitOrder } = useOrderStore();
