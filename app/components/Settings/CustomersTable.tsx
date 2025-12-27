@@ -19,7 +19,7 @@ import {
   deleteCustomer,
 } from "@/services/api/customers"
 import { toast } from "sonner"
-import type { Customer } from "@/app/types/customerTypes"
+import type { Customer } from "@/app/types/domain/customerTypes"
 import { Spinner } from "@/components/ui/spinner"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import LoadingTable from "./LoadingTable"
