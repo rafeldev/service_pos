@@ -1,11 +1,20 @@
+"use client";
+
 import Header from "../components/Header";
 import Cart from "../components/Cart";
+import { usePathname } from "next/navigation";
 
 export default function PosLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const pathname = usePathname();
+  const isPedidos = pathname.includes('/pos/pedidos');
+
+  if (isPedidos) {
+    return <>{children}</>
+  }
   return (
     <div className="h-screen flex flex-col overflow-hidden">
       {/* Header */}
